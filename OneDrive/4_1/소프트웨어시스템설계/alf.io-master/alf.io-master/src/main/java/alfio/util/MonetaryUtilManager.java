@@ -41,15 +41,6 @@ public abstract class MonetaryUtilManager {
 
     //VAT is Value Added Tax
 
-    public static int addVAT(int priceInCents, BigDecimal vat) {
-        return addVAT(new BigDecimal(priceInCents), vat).intValueExact();
-    }
-    //Add the VAT for the price ,and change the type from BigDecimal to integer.
-
-    public static BigDecimal addVAT(BigDecimal price, BigDecimal vat) {
-        return price.add(price.multiply(vat.divide(HUNDRED, 5, UP))).setScale(0, HALF_UP);
-    }
-
     //the parameter vat does not means price but percent.
     //If you put the parameter to this function, let me show the example of use.
     //Here is the value of parameter, price = 8000 vat = 2.5.
@@ -57,38 +48,7 @@ public abstract class MonetaryUtilManager {
     //" 8000 + 8000 * (2.5 / 100) = 8250
 
     //
-    public static int extractVAT(int priceInCents, BigDecimal vat) {
-        return extractVAT(new BigDecimal(priceInCents), vat).intValueExact();
-    }
-    //ADD_BY_KHW
 
-
-    public static BigDecimal extractVAT(BigDecimal price, BigDecimal vat) {
-        return price.subtract(price.divide(BigDecimal.ONE.add(vat.divide(HUNDRED, 5, UP)), 5, HALF_DOWN));
-    }
-    //This parameter 'price' of this function is the price included VAT.
-    //Let's assume the value of parameter 'price' is 10750.
-    //and the value of 'vat' is 7.5
-    //the this function returns the value 750 cents. so the origin price of the parameter 'price' is 10750 - 750.
-
-
-    public static int calcPercentage(int priceInCents, BigDecimal vat) {
-        return calcPercentage((long) priceInCents, vat, BigDecimal::intValueExact);
-    }
-
-    public static <T extends Number> T calcPercentage(long priceInCents, BigDecimal vat, Function<BigDecimal, T> converter) {
-        BigDecimal result = new BigDecimal(priceInCents).multiply(vat.divide(HUNDRED, 5, UP))
-            .setScale(0, HALF_UP);
-        return converter.apply(result);
-    }
-    //This function calculates the VAT price from the origin price.
-    //same function with 'calcPercentage', 'calcVat'
-    //The role of 'Function<K, T> converter' proceeds as follows
-    //if you put the value of K type 'converter' produces the same value of T type.
-
-    public static BigDecimal calcVat(BigDecimal price, BigDecimal percentage) {
-        return price.multiply(percentage.divide(HUNDRED, 5, HALF_UP));
-    }
 
 
     public void requestCurrency(choosingCurrencyID country){

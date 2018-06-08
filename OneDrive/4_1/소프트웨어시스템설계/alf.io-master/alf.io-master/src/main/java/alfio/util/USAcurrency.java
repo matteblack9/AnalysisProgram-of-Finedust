@@ -4,12 +4,47 @@ import java.math.BigDecimal;
 import java.util.function.Function;
 
 import static alfio.util.MonetaryUtil.centsToUnit;
+import static java.math.RoundingMode.HALF_DOWN;
 import static java.math.RoundingMode.HALF_UP;
+import static java.math.RoundingMode.UP;
 
 public class USAcurrency implements Currency {
     USAcurrency() {}
 
     float exchangeRate = 1;
+
+    public int addVAT(int priceInCents, BigDecimal vat) {
+        return addVAT(new BigDecimal(priceInCents), vat).intValueExact();
+    }
+    //Add the VAT for the price ,and change the type from BigDecimal to integer.
+
+    public BigDecimal addVAT(BigDecimal price, BigDecimal vat) {
+        return price.add(price.multiply(vat.divide(HUNDRED, 5, UP))).setScale(0, HALF_UP);
+    }
+
+    public int extractVAT(int priceInCents, BigDecimal vat) {
+        return extractVAT(new BigDecimal(priceInCents), vat).intValueExact();
+    }
+    //ADD_BY_KHW
+
+
+    public BigDecimal extractVAT(BigDecimal price, BigDecimal vat) {
+        return price.subtract(price.divide(BigDecimal.ONE.add(vat.divide(HUNDRED, 5, UP)), 5, HALF_DOWN));
+    }
+
+    public int calcPercentage(int priceInCents, BigDecimal vat) {
+        return calcPercentage((long) priceInCents, vat, BigDecimal::intValueExact);
+    }
+
+    public <T extends Number> T calcPercentage(long priceInCents, BigDecimal vat, Function<BigDecimal, T> converter) {
+        BigDecimal result = new BigDecimal(priceInCents).multiply(vat.divide(HUNDRED, 5, UP))
+            .setScale(0, HALF_UP);
+        return converter.apply(result);
+    }
+
+    public BigDecimal calcVat(BigDecimal price, BigDecimal percentage) {
+        return price.multiply(percentage.divide(HUNDRED, 5, HALF_UP));
+    }
 
     public static final BigDecimal HUNDRED = new BigDecimal("100.00");
 
