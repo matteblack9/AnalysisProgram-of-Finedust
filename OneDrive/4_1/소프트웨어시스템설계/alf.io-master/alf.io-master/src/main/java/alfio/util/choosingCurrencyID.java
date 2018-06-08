@@ -1,0 +1,3 @@
+package alfio.util;
+
+public enum choosingCurrencyID{ UNITED_STATES, CANADA, ITALY, SWITZERLAND, UNITED_KINGDOM, AUSTRALIA, SOUTH_AFRICA;}
